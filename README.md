@@ -204,6 +204,6 @@ http://localhost:3333/api
    ```sh
    npm run dev
    ```
-3. The API will be available at `http://localhost:3000/api`.
+3. The API will be available at `http://localhost:3333/api`.
 
 ---
