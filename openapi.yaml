@@ -1,0 +1,218 @@
+openapi: 3.0.0
+info:
+  title: Simple Blog API
+  version: 1.0.0
+  description: Simple blog API documentation
+servers:
+  - url: http://localhost:3333
+paths:
+  /api/posts:
+    get:
+      summary: Get all posts
+      tags:
+        - Posts
+      responses:
+        '200':
+          description: List of all posts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PostWithAuthor'
+                  count:
+                    type: integer
+    post:
+      summary: Create a new post
+      tags:
+        - Posts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewPost'
+      responses:
+        '201':
+          description: Post created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/Post'
+        '400':
+          description: Missing required fields
+        '404':
+          description: Author not found
+  /api/posts/{id}:
+    get:
+      summary: Get a post by ID
+      tags:
+        - Posts
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The post ID
+      responses:
+        '200':
+          description: The requested post
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/PostWithAuthor'
+        '404':
+          description: Post not found
+    put:
+      summary: Update a post
+      tags:
+        - Posts
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The post ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePost'
+      responses:
+        '200':
+          description: Post updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/Post'
+        '400':
+          description: Missing required fields
+        '404':
+          description: Post not found
+    delete:
+      summary: Delete a post
+      tags:
+        - Posts
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The post ID
+      responses:
+        '200':
+          description: Post deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        '404':
+          description: Post not found
+  /api/users/{id}/posts:
+    get:
+      summary: Get all posts by a user
+      tags:
+        - Users
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The user ID
+      responses:
+        '200':
+          description: List of posts by the user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Post'
+                  count:
+                    type: integer
+        '404':
+          description: User not found
+components:
+  schemas:
+    Post:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        content:
+          type: string
+        authorId:
+          type: string
+    NewPost:
+      type: object
+      required:
+        - title
+        - content
+        - authorId
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+        authorId:
+          type: string
+    UpdatePost:
+      type: object
+      required:
+        - title
+        - content
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+    PostWithAuthor:
+      allOf:
+        - $ref: '#/components/schemas/Post'
+        - type: object
+          properties:
+            author:
+              type: object
+              nullable: true
+              properties:
+                id:
+                  type: string
+                username:
+                  type: string 

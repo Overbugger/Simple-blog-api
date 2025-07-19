@@ -2,9 +2,15 @@ import express from 'express';
 import postRoutes from './routes/posts';
 import userRoutes from './routes/users';
 import { initializeData } from './data/storage';
+import swaggerUi from 'swagger-ui-express';
+import YAML from 'yamljs';
 
 const app = express();
 const PORT = 3333;
+
+const swaggerDocument = YAML.load('./openapi.yaml');
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use(express.json());
 
@@ -37,6 +43,7 @@ app.listen(PORT, () => {
   console.log('  PUT    /api/posts/:id');
   console.log('  DELETE /api/posts/:id');
   console.log('  GET    /api/users/:id/posts');
+  console.log('  API docs available at /api-docs');
 });
 
 export default app;
